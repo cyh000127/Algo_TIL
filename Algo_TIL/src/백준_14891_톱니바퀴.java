@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 /**
  * 14891 톱니바퀴
  */
-public class Main {
+public class 백준_14891_톱니바퀴 {
 	static LinkedList<Integer>[] wheel;
 
 	public static void main(String[] args) throws IOException {

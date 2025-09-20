@@ -48,7 +48,7 @@ public class 백준_3190_뱀 {
 		tail = new ArrayDeque<>();
 
 
-		tail.add(new int[] { 0, 0 }); // 두번 째 이동은 tail 0,0 head가 1,0
+		tail.add(new int[] { 0, 0 }); // 이동은 tail 0,0 head가 1,0
 
 		for (int i = 0; i < L; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -66,7 +66,7 @@ public class 백준_3190_뱀 {
 		snake(N, dir); // 지도 크기만큼 진행시키면 반드시 끝나게 되어있음
 	}
 
-// 시계 방향 (우하좌상)
+	// 시계 방향 (우하좌상)
 	static int[] dr = { 0, 1, 0, -1 };
 	static int[] dc = { 1, 0, -1, 0 };
 

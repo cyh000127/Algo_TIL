@@ -6,7 +6,7 @@ import java.util.StringTokenizer;
 /**
  * 14890 경사로
  */
-public class Main {
+public class 백준_14890_경사로 {
 	static int[][] map;
 	static int N, L;
 

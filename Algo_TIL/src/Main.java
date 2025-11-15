@@ -13,7 +13,7 @@ public class Main {
 	static int N, M;
 	static int[][] map;
 	static ArrayList<int[]> virusList;
-	
+
 	static int ans = Integer.MIN_VALUE;
 
 	public static void main(String[] args) throws IOException {
@@ -31,7 +31,7 @@ public class Main {
 		M = Integer.parseInt(st.nextToken());
 
 		map = new int[N][M];
-		Queue<int[]> virus = new ArrayDeque<>();
+		virusList = new ArrayList<>();
 
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -39,11 +39,12 @@ public class Main {
 
 				int tmp = Integer.parseInt(st.nextToken());
 				if (tmp == 2) {
-					virus.add(new int[] { i, j });
+					virusList.add(new int[] { i, j });
 				}
 				map[i][j] = tmp;
 			}
 		}
+
 		// dfs를 통한 벽 세우기
 		dfs(0);
 
@@ -51,7 +52,6 @@ public class Main {
 	}
 
 	private static void dfs(int wallCnt) {
-
 		// 벽이 세개 세워졌다면 최대값 찾기
 		if (wallCnt == 3) {
 			findMax();
@@ -73,19 +73,21 @@ public class Main {
 	static int[] dc = { 0, 1, 0, -1 };
 
 	private static void findMax() {
-		// 1. 시뮬레이션용 맵 복사
+		// bfs를 여러번 해야하기 때문에 맵과 바이러스의 위치를 복사하는것이 좋음
+		
+		// 맵 복사
 		int[][] copyMap = new int[N][M];
 		for (int i = 0; i < N; i++) {
 			copyMap[i] = map[i].clone();
 		}
 
-		// 2. 지역 큐 q를 생성하고 초기 바이러스 위치 주입
+		// 바이러스 위치 복사
 		Queue<int[]> q = new ArrayDeque<>();
 		for (int[] v : virusList) {
 			q.add(v);
 		}
 
-		// 3. BFS 정석 로직 (이중 for문 제거)
+		// 바이러스 퍼트리기
 		while (!q.isEmpty()) {
 			int[] cur = q.poll();
 			int r = cur[0];
@@ -95,16 +97,14 @@ public class Main {
 				int nr = r + dr[d];
 				int nc = c + dc[d];
 
-				if (nr >= 0 && nr < N && nc >= 0 && nc < M) {
-					if (copyMap[nr][nc] == 0) {
+				if (nr >= 0 && nr < N && nc >= 0 && nc < M && copyMap[nr][nc] == 0) {
 						copyMap[nr][nc] = 2;
-						virusList.add(new int[] { nr, nc });
-					}
+						q.add(new int[] { nr, nc });
 				}
 			}
 		}
 
-		// 4. 안전 영역 카운트
+		// 안전 영역 카운트
 		int cnt = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {

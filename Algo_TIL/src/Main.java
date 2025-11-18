@@ -2,124 +2,117 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
 /**
- * 3190 뱀
+ * 14502 연구소
  */
 public class Main {
-	static int N, K, L, nr, nc, dir, prevTime, liveTime;
-	static boolean[][] map, appleMap;
-	static StringTokenizer st;
+	static int N, M;
+	static int[][] map;
+	static ArrayList<int[]> virusList;
+	
+	static int ans = Integer.MIN_VALUE;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		// N * N의 보드
-		// 뱀은 가장 왼쪽 위에서 시작 (0,0)
-		// 뱀의 시작 길이는 1 (오른쪽을 향함)
 
-		// 1. 몸 길이를 늘려 다음 칸에 머리를 놓음
-		// 2. 벽이나 자기 자신에게 부딪히면 종료
-		// 3. 이동 칸에 사과가 있다면 꼬리는 멈춰있음
-		// 4. 이동 칸에 사과가 없다면 꼬리 칸을 비워줌
+		// 0 허공, 1 벽, 2 바이러스
+		// 바이러스는 4방향으로 계속 움직임
 
-		// 게임이 몇 초 걸리는지 구하셈
+		// 벽을 세 개 놓은 후 바이러스가 퍼질 수 없는 영역을 안전 영역이라고 할 때
+		// 안전영역의 최댓값을 구하셈
 
-		N = Integer.parseInt(br.readLine());
-		K = Integer.parseInt(br.readLine()); // 사과의 개수
-		map = new boolean[N][N];
-		// 사과의 위치
-		appleMap = new boolean[N][N];
-		map[0][0] = true;
+		StringTokenizer st = new StringTokenizer(br.readLine());
 
-		for (int i = 0; i < K; i++) {
+		N = Integer.parseInt(st.nextToken());
+		M = Integer.parseInt(st.nextToken());
+
+		map = new int[N][M];
+		Queue<int[]> virus = new ArrayDeque<>();
+
+		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
-			// 사과는 시작이 (1,1)
-			appleMap[Integer.parseInt(st.nextToken()) - 1][Integer.parseInt(st.nextToken()) - 1] = true;
+			for (int j = 0; j < M; j++) {
+
+				int tmp = Integer.parseInt(st.nextToken());
+				if (tmp == 2) {
+					virus.add(new int[] { i, j });
+				}
+				map[i][j] = tmp;
+			}
 		}
+		// dfs를 통한 벽 세우기
+		dfs(0);
 
-		L = Integer.parseInt(br.readLine());
-
-		dir = 0;
-		liveTime = 0;
-		nr = 0;
-		nc = 0;
-		tail = new ArrayDeque<>();
-
-
-		tail.add(new int[] { 0, 0 }); // 두번 째 이동은 tail 0,0 head가 1,0
-
-		for (int i = 0; i < L; i++) {
-			st = new StringTokenizer(br.readLine());
-			// 이전 명령과 지금 명령의 시간 차이를 계산
-			int time = Integer.parseInt(st.nextToken());
-			int order = time - prevTime;
-
-			snake(order, dir);
-
-			dir = calcDir(st.nextToken()); // dir 갱신
-			prevTime = time;
-		}
-
-		// 모든 명령을 수행하고도 살아있다면 실행할 로직
-		snake(N, dir); // 지도 크기만큼 진행시키면 반드시 끝나게 되어있음
+		System.out.println(ans);
 	}
 
-// 시계 방향 (우하좌상)
-	static int[] dr = { 0, 1, 0, -1 };
-	static int[] dc = { 1, 0, -1, 0 };
+	private static void dfs(int wallCnt) {
 
-	static Queue<int[]> tail;
-
-	// time초 동안 dir방향으로 이동 -> 이동이 끝났다면 int 를 반환
-	private static void snake(int time, int dir) {
-		for (int i = 1; i <= time; i++) {
-
-			nr += dr[dir];
-			nc += dc[dir];
-
-			// 종료 조건
-			if (nr >= N || nr < 0 || nc < 0 || nc >= N || map[nr][nc]) {
-				liveTime += i;
-				// liveTime을 출력하고 종료
-				System.out.println(liveTime);
-				System.exit(0);
-				break;
-			}
-
-			map[nr][nc] = true;
-
-			
-			// 머리 부분 추가
-			tail.add(new int[] { nr, nc });
-
-			if (appleMap[nr][nc]) {
-				appleMap[nr][nc] = false;
-				continue;
-			}
-
-			// 꼬리 삭제
-			int[] nt = tail.poll();
-			map[nt[0]][nt[1]] = false;
+		// 벽이 세개 세워졌다면 최대값 찾기
+		if (wallCnt == 3) {
+			findMax();
+			return;
 		}
-		liveTime += time;
-		return;
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (map[i][j] == 0) {
+					map[i][j] = 1;
+					dfs(wallCnt + 1);
+					map[i][j] = 0;
+				}
+			}
+		}
 	}
 
-	private static int calcDir(String token) {
+	static int[] dr = { -1, 0, 1, 0 };
+	static int[] dc = { 0, 1, 0, -1 };
 
-		// L 왼쪽 (-1), D 오른쪽(+1)
-		// 기본은 오른쪽
-		if (token.equals("L")) {
-			// -1 == 3
-			if (dir == 0) {
-				return dir = 3;
-			} else
-				return dir -= 1;
-		} else {
-			// 4 == 0
-			return dir = (dir + 1) % 4;
+	private static void findMax() {
+		// 1. 시뮬레이션용 맵 복사
+		int[][] copyMap = new int[N][M];
+		for (int i = 0; i < N; i++) {
+			copyMap[i] = map[i].clone();
 		}
+
+		// 2. 지역 큐 q를 생성하고 초기 바이러스 위치 주입
+		Queue<int[]> q = new ArrayDeque<>();
+		for (int[] v : virusList) {
+			q.add(v);
+		}
+
+		// 3. BFS 정석 로직 (이중 for문 제거)
+		while (!q.isEmpty()) {
+			int[] cur = q.poll();
+			int r = cur[0];
+			int c = cur[1];
+
+			for (int d = 0; d < 4; d++) {
+				int nr = r + dr[d];
+				int nc = c + dc[d];
+
+				if (nr >= 0 && nr < N && nc >= 0 && nc < M) {
+					if (copyMap[nr][nc] == 0) {
+						copyMap[nr][nc] = 2;
+						virusList.add(new int[] { nr, nc });
+					}
+				}
+			}
+		}
+
+		// 4. 안전 영역 카운트
+		int cnt = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < M; j++) {
+				if (copyMap[i][j] == 0) {
+					cnt++;
+				}
+			}
+		}
+		ans = Math.max(cnt, ans);
 	}
 }

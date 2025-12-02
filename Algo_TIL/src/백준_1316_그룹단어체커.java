@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 /**
  * 1316 백준 그룹 단어 체커
  */
-public class Main {
+public class 백준_1316_그룹단어체커 {
 	public static void main(String[] args) throws IOException {
 		// 한 단어가 연속으로 나오는 것 OK
 		// 다른 단어로 바뀌어도 OK

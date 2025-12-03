@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 /**
  * 13458 시험감독
  */
-public class Main {
+public class 백준_13458_시험감독 {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

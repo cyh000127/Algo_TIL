@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 /**
  * 1543 백준 문서 검색
  */
-public class Main {
+public class 백준_1543_문서검색 {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

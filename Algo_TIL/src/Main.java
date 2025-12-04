@@ -1,58 +1,124 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 /**
- * 13458 시험감독
+ * 3190 뱀
  */
 public class Main {
+	static int N, K, L, nr, nc, dir, prevTime, liveTime;
+	static boolean[][] map, appleMap;
+	static StringTokenizer st;
+
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		// N * N의 보드
+		// 뱀은 가장 왼쪽 위에서 시작 (0,0)
+		// 뱀의 시작 길이는 1 (오른쪽을 향함)
 
-		// 총 N개의 시험장.
-		// i번의 시험장에 있는 응시자 수는 Ai 명
+		// 1. 몸 길이를 늘려 다음 칸에 머리를 놓음
+		// 2. 벽이나 자기 자신에게 부딪히면 종료
+		// 3. 이동 칸에 사과가 있다면 꼬리는 멈춰있음
+		// 4. 이동 칸에 사과가 없다면 꼬리 칸을 비워줌
 
-		// 총 감독 + 부 감독 두 종류가 존재함
-		// 총 감독 = B명 감시 가능
-		// 부 감독 = C명 감시 가능
+		// 게임이 몇 초 걸리는지 구하셈
 
-		// 총감은 1명 부감은 얼마든지 있어도 됨
+		N = Integer.parseInt(br.readLine());
+		K = Integer.parseInt(br.readLine()); // 사과의 개수
+		map = new boolean[N][N];
+		// 사과의 위치
+		appleMap = new boolean[N][N];
+		map[0][0] = true;
 
-		StringTokenizer st;
-
-		int N = Integer.parseInt(br.readLine());
-		int[] Ai = new int[N];
-
-		st = new StringTokenizer(br.readLine());
-
-		for (int i = 0; i < N; i++) {
-			Ai[i] = Integer.parseInt(st.nextToken());
+		for (int i = 0; i < K; i++) {
+			st = new StringTokenizer(br.readLine());
+			// 사과는 시작이 (1,1)
+			appleMap[Integer.parseInt(st.nextToken()) - 1][Integer.parseInt(st.nextToken()) - 1] = true;
 		}
 
-		st = new StringTokenizer(br.readLine());
-		int B = Integer.parseInt(st.nextToken());
-		int C = Integer.parseInt(st.nextToken());
+		L = Integer.parseInt(br.readLine());
 
-		long ans = 0;
-		// 한반에 최소 필요한 감독관 수
-		for (int i = 0; i < N; i++) {
-			// 각 반에서 총 감독관이 감당할 수 있는 수
-			int tmp = Ai[i] - B;
+		dir = 0;
+		liveTime = 0;
+		nr = 0;
+		nc = 0;
+		tail = new ArrayDeque<>();
 
-			if (tmp <= 0) {
-				// 총 감독관으로만 해결할 수 있다면
-				ans += 1;
-			} else if (tmp % C != 0) {
-				// tmp를 C로 나눈 나머지가 존재한다면 + 1
-				ans += 2 + tmp / C;
-			} else {
-				// 정확히 나눠진다면 총감독관 한명만 더함
-				ans += 1 + tmp / C;
+		tail.add(new int[] { 0, 0 }); // 첫 이동은 tail,head가 둘 다 0, 0
+		tail.add(new int[] { 0, 0 }); // 두번 째 이동은 tail 0,0 head가 1,0
+
+		for (int i = 0; i < L; i++) {
+			st = new StringTokenizer(br.readLine());
+			// 이전 명령과 지금 명령의 시간 차이를 계산
+			int time = Integer.parseInt(st.nextToken());
+			int order = time - prevTime;
+
+			snake(order, dir);
+
+			dir = calcDir(st.nextToken()); // dir 갱신
+			prevTime = time;
+		}
+
+		// 모든 명령을 수행하고도 살아있다면 실행할 로직
+		snake(N, dir); // 지도 크기만큼 진행시키면 반드시 끝나게 되어있음
+	}
+
+// 시계 방향 (우하좌상)
+	static int[] dr = { 0, 1, 0, -1 };
+	static int[] dc = { 1, 0, -1, 0 };
+
+	static Queue<int[]> tail;
+
+	// time초 동안 dir방향으로 이동 -> 이동이 끝났다면 int 를 반환
+	private static void snake(int time, int dir) {
+		for (int i = 1; i <= time; i++) {
+
+			nr += dr[dir];
+			nc += dc[dir];
+
+			// 종료 조건
+			if (nr >= N || nr < 0 || nc < 0 || nc >= N || map[nr][nc]) {
+				liveTime += i;
+				// liveTime을 출력하고 종료
+				System.out.println(liveTime);
+				System.exit(0);
+				break;
 			}
 
+			map[nr][nc] = true;
+
+			if (appleMap[nr][nc]) {
+				appleMap[nr][nc] = false;
+				continue;
+			}
+
+			// 머리 부분 추가
+			tail.add(new int[] { nr, nc });
+
+			// 꼬리 삭제
+			int[] nt = tail.poll();
+			map[nt[0]][nt[1]] = false;
 		}
-		System.out.println(ans);
+		liveTime += time;
+		return;
+	}
+
+	private static int calcDir(String token) {
+
+		// L 왼쪽 (-1), D 오른쪽(+1)
+		// 기본은 오른쪽
+		if (token.equals("L")) {
+			// -1 == 3
+			if (dir == 0) {
+				return dir = 3;
+			} else
+				return dir -= 1;
+		} else {
+			// 4 == 0
+			return dir = (dir + 1) % 4;
+		}
 	}
 }

@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
 /**
  * 3190 뱀
  */
-public class Main {
+public class 백준_3190_뱀 {
 	static int N, K, L, nr, nc, dir, prevTime, liveTime;
 	static boolean[][] map, appleMap;
 	static StringTokenizer st;

@@ -57,4 +57,4 @@ public class 백준_15654_N과M5 {
 
 		return;
 	}
-
+}

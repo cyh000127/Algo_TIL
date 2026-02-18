@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 1786 찾기
  */
-public class Main {
+public class 백준_1786_찾기 {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

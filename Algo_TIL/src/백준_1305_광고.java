@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 /**
  * 1305 광고
  */
-public class Main {
+public class 백준_1305_광고 {
 
 	public static void main(String[] args) throws IOException {
 

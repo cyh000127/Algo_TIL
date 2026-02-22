@@ -3,8 +3,6 @@ package LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.management.RuntimeErrorException;
-
 /**
  * LinkedList 구현
  */

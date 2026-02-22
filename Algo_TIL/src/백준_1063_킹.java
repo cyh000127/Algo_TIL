@@ -8,7 +8,7 @@ import java.util.StringTokenizer;
  * 킹
  */
 
-public class Main {
+public class 백준_1063_킹 {
 	private enum Dir {
 		R(0, 1), // R 오른쪽
 		L(0, -1), // L 왼쪽

@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
  * 7568 백준 덩치
  */
 
-public class Main {
+public class 백준_7568_정치 {
 	public static void main(String[] args) throws IOException {
 		// 키 , 몸무게를 비교해서 두가지 값 모두 큰 사람은 우위를 점함
 		// 등수를 정하라 (둘 중 하나만 크다면 등수를 비교할 수 없음)

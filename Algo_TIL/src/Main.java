@@ -1,87 +1,158 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 /**
- * 14890 경사로
+ * 14891 톱니바퀴
  */
 public class Main {
-	static int[][] map;
-	static int N, L;
+	static LinkedList<Integer>[] wheel;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		// N * N 지도가 존재함.
-		// 길을 지나가려면 높이가 같은 길이거나
-		// 높이 1, 길이 L 짜리 경사로를 설치한다.
 
-		// 경사로는 낮은칸에 놓는다. L개의 연속 칸 경사로 바닥이 모두 접해야함
-		// 낮은 칸 - 높은칸의 높이차이는 1이어야함
-		// 경사로를 놓을 낮은 칸의 높이는 모두 같아야 함
-		// L개의 칸이 연속되어 있어야함
+		// 총 8개의 톱니를 가지는 톱니바퀴 4개가 일렬로 있음
+		// 톱니는 시계, 반시계 방향으로 돌고 총 K회 돌리려고 함
+		// 맞닿은 톱니의 극이 다르면 반시계방향으로 돌아감
+		// 연쇄적으로 돌아가긴 하지만 결과적으로 한번의 행동에 한번의 결과가 나옴
 
-		// == 아래는 불가능 ==
-		// 1. 경사로에 또 경사로 놓기
-		// 2. 놓을 바닥이 평평하지 않은경우
-		// 3. 경사로 범위를 벗어나는 경우
+		// K번 회전 시킨 후 네 톱니바퀴의 점수 합을 출력한다.
 
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		// 각 톱니의 12시가 N극이면 0점, S극이면 1,2,4,8 점
+		// N극은 0 / S극은 1
 
-		N = Integer.parseInt(st.nextToken());
-		L = Integer.parseInt(st.nextToken());
+		wheel = new LinkedList[5];
 
-		map = new int[N * 2][N]; // 행에 통일하기 위한 2 * N 배열
+		// 2. 각 방에 실제 LinkedList 객체를 넣어줘야 함 (초기화)
+		for (int i = 0; i < 5; i++) {
+			wheel[i] = new LinkedList<Integer>();
+		}
+
+		for (int i = 1; i < 5; i++) {
+			String str = br.readLine();
+			for (int j = 0; j < 8; j++) {
+				wheel[i].add(str.charAt(j) - '0');
+			}
+		}
+
+		int N = Integer.parseInt(br.readLine());
+
 		for (int i = 0; i < N; i++) {
-			st = new StringTokenizer(br.readLine());
-			for (int j = 0; j < N; j++) {
-				map[i][j] = Integer.parseInt(st.nextToken());
-			}
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			rotate(Integer.parseInt(st.nextToken()) * Integer.parseInt(st.nextToken()));
 		}
 
-		// 모든 줄의 기준을 행으로 통일하기 위한 작업
-		for (int i = N; i < 2 * N; i++) {
-			for (int j = 0; j < N; j++) {
-				map[i][j] = map[j][i - N];
-			}
-		}
+		// S 극이 1이기 때문에 1,2,4,8을 곱합
+		System.out.println(wheel[1].get(0) + wheel[2].get(0) * 2 + wheel[3].get(0) * 4 + wheel[4].get(0) * 8);
 
-		int ans = 0;
-		for (int i = 0; i < N * 2; i++) {
-			if (slopeCalc(map[i])) {
-				ans++;
-			}
-		}
+		// idx 2 = 오른쪽
+		// idx 6 = 왼쪽
+		// idx 0 = 12시
 
-		System.out.println(ans);
+		// 시계방향 +1
+		// 반시계방향 -1
+		// arrayDeque에 넣을까?
+
 	}
 
-	// 다음 경사로의 높이가 1차이날 때 L 길이만큼의 size가 있는지 확인
-	// 경사로가 가능하다면 ans++
-	// N 제한이 100이기 때문에 런타임 날 일은 없을것 같음
-	private static boolean slopeCalc(int[] arr) {
-	    boolean[] slope = new boolean[N]; // 경사로 설치 여부
+	private static void rotate(int x) {
+		// 회전 전 값을 저장할 배열 arr
+		int[][] arr = new int[5][2];
 
-	    for (int i = 0; i < N - 1; i++) {
-	        int diff = arr[i] - arr[i + 1];
+		// 회전전 2,6의 값을 저장해 둠
+		for (int i = 1; i < 5; i++) {
+			arr[i][0] = wheel[i].get(6);
+			arr[i][1] = wheel[i].get(2);
+		}
 
-	        if (Math.abs(diff) > 1) return false; // 높이 차 1 초과
+		// x 가 시계방향 회전일 경우
+		if (x > 0) {
 
-	        if (diff == -1) { // 오르막 설치 i부터 L칸 전 까지
-	            for (int j = 0; j < L; j++) {
-	                // 범위 밖이거나, 이미 경사로가 있거나, 높이가 일정하지 않으면 실패
-	                if (i - j < 0 || slope[i - j] || arr[i] != arr[i - j]) return false;
-	                slope[i - j] = true;
-	            }
-	        } 
-	        else if (diff == 1) { // 내리막 설치 i+1 부터 L칸 뒤까지
-	            for (int j = 1; j <= L; j++) {
-	                // 범위 밖이거나, 이미 경사로가 있거나, 높이가 일정하지 않으면 실패
-	                if (i + j >= N || slope[i + j] || arr[i + 1] != arr[i + j]) return false;
-	                slope[i + j] = true;
-	            }
-	        }
-	    }
-	    return true;
+			// 방향을 저장
+			int w = 1;
+
+			for (int i = x; i < 4; i++) {
+				// 다른 극이라면 다음 index도 rotate
+				if (arr[i][1] != arr[i + 1][0]) {
+					w = rotateSimul(w, i, 'R');
+				} else if (arr[i][1] == arr[i + 1][0]) {
+					// 같다면 break하는 로직도 제대로 추가 해줘야 함
+					break;
+				}
+			}
+
+			w = 1;
+
+			for (int i = x; i > 1; i--) {
+
+				// 다른 극이라면 다음 index도 rotate
+				if (arr[i][0] != arr[i - 1][1]) {
+					w = rotateSimul(w, i, 'L');
+				} else if (arr[i][0] == arr[i - 1][1]) {
+					// 같다면 break하는 로직도 제대로 추가 해줘야 함
+					break;
+				}
+			}
+
+			// 본인 회전 ( 시계 )
+			wheel[x].addFirst(wheel[x].pollLast());
+
+		} else {
+			// x가 음수로 저장되어 있기 때문에 다시 양수로 변환
+			x *= -1;
+
+			// 방향을 저장 (반시계: -1)
+			int w = -1;
+
+			// x가 반시계 방향으로 회전하는 경우
+			for (int i = x; i < 4; i++) {
+				// 수정: wheel 대신 미리 저장된 arr[i][1](2번 포지션)과 arr[i+1][0](6번 포지션) 비교
+				if (arr[i][1] != arr[i + 1][0]) {
+					w = rotateSimul(w, i, 'R');
+				} else {
+					// 극이 같다면 연쇄 회전 중단
+					break;
+				}
+			}
+
+			w = -1;
+			for (int i = x; i > 1; i--) {
+				// 수정: wheel 대신 미리 저장된 arr[i][0](6번 포지션)과 arr[i-1][1](2번 포지션) 비교
+				if (arr[i][0] != arr[i - 1][1]) {
+					w = rotateSimul(w, i, 'L');
+				} else {
+					// 극이 같다면 연쇄 회전 중단
+					break;
+				}
+			}
+
+			// 본인 회전 ( 반시계 )
+			wheel[x].addLast(wheel[x].pollFirst());
+		}
+	}
+
+	// 방향을 반대로 돌리면서 같은게 나올 때 까지 돌리기
+	private static int rotateSimul(int dir, int i, char r) {
+		if (r == 'R') {
+			if (dir == 1) {
+				wheel[i + 1].addFirst(wheel[i + 1].pollLast());
+				return -1;
+			} else {
+				wheel[i + 1].addLast(wheel[i + 1].pollFirst());
+				return 1;
+			}
+		} else {
+			if (dir == 1) {
+				wheel[i - 1].addFirst(wheel[i - 1].pollLast());
+				return -1;
+			} else {
+				wheel[i - 1].addLast(wheel[i - 1].pollFirst());
+				return 1;
+			}
+		}
 	}
 }

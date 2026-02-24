@@ -110,7 +110,7 @@ public class Main {
 
 			// x가 반시계 방향으로 회전하는 경우
 			for (int i = x; i < 4; i++) {
-				// 수정: wheel 대신 미리 저장된 arr[i][1](2번 포지션)과 arr[i+1][0](6번 포지션) 비교
+				// 수정: wheel 대신 미리 저장된 arr[i][1]과 arr[i+1][0]
 				if (arr[i][1] != arr[i + 1][0]) {
 					w = rotateSimul(w, i, 'R');
 				} else {
@@ -121,7 +121,7 @@ public class Main {
 
 			w = -1;
 			for (int i = x; i > 1; i--) {
-				// 수정: wheel 대신 미리 저장된 arr[i][0](6번 포지션)과 arr[i-1][1](2번 포지션) 비교
+				// 수정: wheel 대신 미리 저장된 arr[i][0]과 arr[i-1][1]
 				if (arr[i][0] != arr[i - 1][1]) {
 					w = rotateSimul(w, i, 'L');
 				} else {

@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 11585 속타는 저녁 메뉴
  */
-public class Main {
+public class 백준_11585_속타는저녁메뉴 {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

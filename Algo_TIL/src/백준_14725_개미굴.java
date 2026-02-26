@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 14725 개미굴
  */
-public class Main {
+public class 백준_14725_개미굴 {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 14719 빗물
  */
-public class Main {
+public class 백준_20207_빗물 {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

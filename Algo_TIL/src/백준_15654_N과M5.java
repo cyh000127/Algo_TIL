@@ -8,6 +8,7 @@ public class 백준_15654_N과M5 {
 	static int N, M;
 	static int[] arr, result;
 	static StringBuilder sb = new StringBuilder();
+	static boolean[] visited;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,6 +23,7 @@ public class 백준_15654_N과M5 {
 
 		arr = new int[N];
 		result = new int[M];
+		visited = new boolean[N];
 		st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < N; i++) {
 			arr[i] = Integer.parseInt(st.nextToken());
@@ -29,11 +31,11 @@ public class 백준_15654_N과M5 {
 
 		Arrays.sort(arr);
 
-		findAll(0, 0);
+		findAll(0);
 		System.out.println(sb);
 	}
 
-	private static void findAll(int idx, int cnt) {
+	private static void findAll(int cnt) {
 		if (cnt == M) {
 			for (int x : result) {
 				sb.append(x).append(" ");
@@ -42,12 +44,17 @@ public class 백준_15654_N과M5 {
 			return;
 		}
 
-		for (int i = idx; i < N; i++) {
-			result[cnt] = arr[i];
-			findAll(i + 1, cnt + 1);
+		for (int i = 0; i < N; i++) {
+			if (!visited[i]) {
+
+				// 재귀
+				visited[i] = true;
+				result[cnt] = arr[i];
+				findAll(cnt + 1);
+				visited[i] = false;
+			}
 		}
 
 		return;
 	}
 
-}

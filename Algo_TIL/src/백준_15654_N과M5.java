@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 15654 N과 M (5)
  */
-public class Main {
+public class 백준_15654_N과M5 {
 	static int N, M;
 	static int[] arr, result;
 	static StringBuilder sb = new StringBuilder();

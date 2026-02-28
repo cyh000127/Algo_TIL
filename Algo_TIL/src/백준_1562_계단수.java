@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 1562 계단 수
  */
-public class Main {
+public class 백준_1562_계단수 {
 	static int N;
 	static final int num = 1_000_000_000;
 	static long ans;

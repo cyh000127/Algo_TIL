@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 2490 윷놀이
  */
-public class Main {
+public class 백준_2490_윷놀이 {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

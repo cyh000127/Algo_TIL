@@ -4,7 +4,7 @@ import java.io.*;
 /**
  * 3174 나누기
  */
-public class Main {
+public class 백준_3174_나누기 {
 
 	static final int MOD = 1337377;
 	static char[] mainString;
